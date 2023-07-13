@@ -7,8 +7,8 @@
     "node": "v16.16.0"
   },
   "scripts": {
-    "start": "node src/server.js",
-    "watch": "nodemon src/server.js"
+    "start": "node server.js",
+    "watch": "nodemon server.js"
   },
   "keywords": [
     "MERN"
