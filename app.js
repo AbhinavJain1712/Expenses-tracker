@@ -24,7 +24,7 @@ app.get("/", (req,res)=>{
 app.use("/api/users", userRoute);
 
 // account statistics
-app.use("/", accountStatsRoute);
+app.use("/api", accountStatsRoute);
 
 //income routes
 app.use("/api/income", incomeRoute);

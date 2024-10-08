@@ -4,6 +4,6 @@ const accountStatsCtrl = require("../../controllers/accountStatsCtrl/accountStat
 const accountStatsRoute = express.Router();
 
 
-accountStatsRoute.get('/api/account-statistics',accountStatsCtrl)
+accountStatsRoute.get('/stats',accountStatsCtrl)
 
 module.exports = accountStatsRoute;

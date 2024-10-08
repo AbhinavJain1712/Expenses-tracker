@@ -3,7 +3,6 @@ const jwt = require("jsonwebtoken");
 const User = require("../model/User");
 
 
-
 const authMiddleware = expressAsyncHandler(async (req,res,next) =>{
     let token;
 

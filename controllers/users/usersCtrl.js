@@ -64,7 +64,7 @@ const updateUserCtrl = expressAsyncHandler(async (req, res)=>{
       firstname: req?.body?.firstname,
       lastname: req?.body?.lastname,
        email: req?.body?.email,
-     },{ new: true, runValidators: true,});
+     },{ new: true, runValidators: true});
      res.json(profile);
   }
   catch(error){

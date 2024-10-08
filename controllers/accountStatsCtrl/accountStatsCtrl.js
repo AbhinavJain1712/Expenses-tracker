@@ -28,16 +28,16 @@ const accountStatsCtrl = expressAsyncHandler(async (req,res)=>{
                 _id: null,
                 averageIncome: {$avg:"$amount"},
                 totalIncome: {$sum:"$amount"},
-                minIncome: {$max:"$amount"},
+                minIncome: {$min:"$amount"},
                 maxIncome: {$max:"$amount"},
                 totalRecordsIncome: {$sum:1},
             },
         },
     ]);
-    res.json({expenseStats,incomeStats});
+    return res.json({expenseStats,incomeStats});
     }
     catch(error){
-       res.json(error);
+      return res.json(error);
     }
 });
 
