@@ -1,74 +1,78 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import ContentDetails from "../../components/ContentDetails/ContentDetails";
 import ErrorDisplayMessage from "../../components/ErrorDisplayMessage";
-import { userProfileAction } from "../../redux/slices/users/usersSlices";
-import calTransaction from "../../utils/accStatistics";
 import LoadingComponent from "../../components/Loading/Loading";
 import AppPagination from "../../components/Pagination/AppPagination";
-import { fetchIncomesAction } from "../../redux/slices/income/incomeAction";
+import { fetchExpensesAction } from "../../redux/slices/expenses/expenseAction";
+import { userProfileAction } from "../../redux/slices/users/usersSlices";
+import calTransaction from "../../utils/accStatistics";
 
-const IncomeList = ({ location: { state } }) => {
+const ExpensesList = () => {
   const [page, setPage] = useState(1);
   const dispatch = useDispatch();
-  //hide some table tabs to display user income information
-  const dataType = state?.data;
+
+  // Fetch expenses on page load or page change
   useEffect(() => {
-    dispatch(fetchIncomesAction(page));
-  }, [page]);
+    dispatch(fetchExpensesAction(page));
+  }, [page, dispatch]);
 
-  const income = useSelector(state => state?.income);
-  const { incLoading, incomeList, incAppErr, incServerErr } = income;
+  // Get expenses from Redux state
+  const expenses = useSelector(state => state.expenses);
+  const { expLoading, expenseList, expAppErr, expServerErr } = expenses;
+  
+  console.log("Expense List from Backend:", expenseList); // Debugging
 
- // const history = useHistory();
-  // const navigate = expense => {
-  //   history.push({
-  //     pathname: "/edit",
-  //     state: {
-  //       data,
-  //     },
-  //   });
-  // };
-  const totalInc = calTransaction(incomeList?.docs ? incomeList?.docs : []);
+  // Calculate total expenses
+  const totalExp = calTransaction(expenseList?.docs ? expenseList?.docs : []);
 
-  //user income
+  // Fetch user profile on component mount
   useEffect(() => {
     dispatch(userProfileAction());
-  }, []);
+  }, [dispatch]);
+
   const user = useSelector(state => state.users);
   const { profile, userLoading, userAppErr, userServerErr } = user;
+  
+  console.log("User Profile:", profile); // Debugging
+
   return (
     <>
-      {incLoading ? (
+      {(expLoading || userLoading) ? (
         <LoadingComponent />
-      ) : incAppErr || incServerErr ? (
+      ) : (expAppErr || expServerErr || userAppErr || userServerErr) ? (
         <ErrorDisplayMessage>
-        {" "}  {incServerErr} {incAppErr}
+          {expServerErr || userServerErr || expAppErr || userAppErr}
         </ErrorDisplayMessage>
       ) : (
         <section className="py-6">
           <div className="container-fluid">
             <div className="position-relative border rounded-2">
+              <a
+                className="position-absolute top-0 end-0 mt-4 me-4"
+                href="#"
+              ></a>
               <div className="pt-8 px-8 mb-8">
-                <h6 className="mb-0 fs-3">Recent Income transactions</h6>
+                <h6 className="mb-0 fs-3">Recent Expense transactions</h6>
                 <p className="mb-0">
-                  Below is the history of your income transactions records
+                  Below is the history of your expense transactions records
                 </p>
-                <Link to="/add-income" className="btn  btn-success me-2 m-2">
-                  New Income
+                <Link
+                  to="/add-expense"
+                  className="btn btn-outline-danger me-2 m-2"
+                >
+                  New Expense
                 </Link>
               </div>
               <table className="table">
                 <thead>
                   <tr className="table-active">
-                    {!dataType && (
-                      <th scope="col">
-                        <button className="btn d-flex align-items-centerr text-uppercase">
-                          <small className="text-center">Deposited By</small>
-                        </button>
-                      </th>
-                    )}
+                    <th scope="col">
+                      <button className="btn d-flex align-items-centerr text-uppercase">
+                        <small>Withdrawed By</small>
+                      </button>
+                    </th>
                     <th scope="col">
                       <button className="btn d-flex align-items-centerr text-uppercase">
                         <small>Title</small>
@@ -97,17 +101,17 @@ const IncomeList = ({ location: { state } }) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {incomeList?.length <= 0 ? (
-                    <h2>No Income Found</h2>
-                  ) : (
-                    incomeList?.docs?.map(exp => (
-                      <ContentDetails
-                        dataType={dataType}
-                        item={exp}
-                        key={exp?._id}
-                      />
-                    ))
-                  )}
+                  <>
+                    {expenseList?.docs?.length <= 0 ? (
+                      <h2>No Expense Found</h2>
+                    ) : (
+                      expenseList?.docs?.map(exp => (
+                        profile?.isAdmin || exp.user === profile?._id ? (
+                          <ContentDetails item={exp} key={exp?._id} />
+                        ) : null
+                      ))
+                    )}
+                  </>
                 </tbody>
               </table>
             </div>
@@ -120,8 +124,11 @@ const IncomeList = ({ location: { state } }) => {
               marginTop: "20px",
             }}
           >
-            {incomeList?.docs?.length > 1 && (
-              <AppPagination setPage={setPage} items={incomeList?.totalPages} />
+            {expenseList?.docs?.length > 1 && (
+              <AppPagination
+                setPage={setPage}
+                items={expenseList?.totalPages}
+              />
             )}
           </div>
         </section>
@@ -130,4 +137,4 @@ const IncomeList = ({ location: { state } }) => {
   );
 };
 
-export default IncomeList;
+export default ExpensesList;

@@ -107,6 +107,7 @@ export const deleteIncomeAction = createAsyncThunk(
         Authorization: `Bearer ${userAuth?.token}`,
       },
     };
+    console.log("Deleting income with ID:", id);
     //http call
     try {
       const { data } = await axios.delete(

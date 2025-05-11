@@ -2,76 +2,85 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { userProfileAction } from "../../../redux/slices/users/usersSlices";
-import calTransaction from "../../../utils/accStatistics";
 import DashboardData from "../../../components/Dashboard/DashboardData";
 import navigate from "../../../utils/navigate";
 import UserProfileStats from "./UserProfileStats";
 import DataGraph from "../../../components/Dashboard/DataGrap";
-import useDateFormatter from "../../../hooks/useDateFormatter";
 import LoadingComponent from "../../../components/Loading/Loading";
 import ErrorDisplayMessage from "../../../components/ErrorDisplayMessage";
+import useCurrencyFormatter from "../../../hooks/useCurrencyFormatter";
 
 const Profile = () => {
-  const [expResult, setExpResult] = useState([]);
-  const [incResult, setIncResult] = useState([]);
+  const [expResult, setExpResult] = useState({
+    sumTotal: 0,
+    avg: 0,
+    min: 0,
+    max: 0,
+    numOfTransactions: 0,
+  });
+  const [incResult, setIncResult] = useState({
+    sumTotal: 0,
+    avg: 0,
+    min: 0,
+    max: 0,
+    numOfTransactions: 0,
+  });
+  
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(userProfileAction());
-  }, []);
+  }, [dispatch]);
+
   //history
   const history = useHistory();
   const users = useSelector(state => state?.users);
-  const { profile, userLoading, userAppErr, userServerErr, userAuth } = users;
+  const { profile, userLoading, userAppErr, userServerErr } = users;
 
-  //income
+  // Calculate Income and Expenses
   useEffect(() => {
-    if (profile?.expenses) {
-      const expenses = calTransaction(profile?.expenses);
-      setExpResult(expenses);
+    if (profile?.expenses?.length) {
+      const totalExpenses = profile.expenses.reduce((acc, curr) => acc + curr.amount, 0);
+      const minExpense = Math.min(...profile.expenses.map(exp => exp.amount));
+      const maxExpense = Math.max(...profile.expenses.map(exp => exp.amount));
+      const numOfTransactions = profile.expenses.length;
+      const avgExpense = totalExpenses / numOfTransactions;
+
+      setExpResult({
+        sumTotal: totalExpenses,
+        avg: avgExpense,
+        min: minExpense,
+        max: maxExpense,
+        numOfTransactions,
+      });
     }
-    if (profile?.income) {
-      const income = calTransaction(profile?.income);
-      setIncResult(income);
+
+    if (profile?.income?.length) {
+      const totalIncome = profile.income.reduce((acc, curr) => acc + curr.amount, 0);
+      const minIncome = Math.min(...profile.income.map(inc => inc.amount));
+      const maxIncome = Math.max(...profile.income.map(inc => inc.amount));
+      const numOfTransactions = profile.income.length;
+      const avgIncome = totalIncome / numOfTransactions;
+
+      setIncResult({
+        sumTotal: totalIncome,
+        avg: avgIncome,
+        min: minIncome,
+        max: maxIncome,
+        numOfTransactions,
+      });
     }
-  }, [profile?.income]);
-
-  // console.log(results);
-  // const income = profile?.income;
-  // const totalIncome = income
-  //   ?.map(inc => inc?.amount)
-  //   .reduce((acc, curr) => {
-  //     return acc + curr;
-  //   }, 0);
-
-  // //Total Expenses
-  // const expenses = profile?.expenses;
-  // const totalExp = expenses
-  //   ?.map(inc => inc?.amount)
-  //   .reduce((acc, curr) => {
-  //     return acc + curr;
-  //   }, 0);
-
-  // //Average expenses
-  // const averageExp = totalExp / 2;
-
-  // //min Expense
-
-  // const expensesArr = profile?.expenses?.map(exp => exp?.amount);
-  // const minExpenses = Math.min(...expensesArr);
-  // const maxExpenses = Math.max(...expensesArr);
-
-  // console.log(maxExpenses, totalExp);
-
+  }, [profile]);
+   
+  const netProfit = incResult.sumTotal-expResult.sumTotal;
+  const formattedNetProfit = useCurrencyFormatter("INR", netProfit);
   return (
     <>
       {userLoading ? (
         <LoadingComponent />
       ) : userAppErr || userServerErr ? (
-        <>
-          <ErrorDisplayMessage>
-            {userServerErr} {userAppErr}
-          </ErrorDisplayMessage>
-        </>
+        <ErrorDisplayMessage>
+          {userServerErr} {userAppErr}
+        </ErrorDisplayMessage>
       ) : (
         <section className="py-5">
           <div className="container">
@@ -79,7 +88,6 @@ const Profile = () => {
               <div className="d-flex mb-6 align-items-center">
                 <img
                   className="img-fluid me-4 rounded-2"
-                  //   style="width: 64px; height: 64px;"
                   src="https://images.unsplash.com/photo-1593789382576-54f489574d26?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=faces&amp;cs=tinysrgb&amp;fit=crop&amp;h=128&amp;w=128"
                   alt=""
                 />
@@ -89,7 +97,7 @@ const Profile = () => {
                       {profile?.firstname} {profile?.lastname}
                     </span>
                     <span className="badge ms-2 bg-primary-light text-primary">
-                      {profile?.expenses?.length + profile?.income?.length}{" "}
+                      {expResult.numOfTransactions + incResult.numOfTransactions}{" "}
                       Records Created
                     </span>
                   </h6>
@@ -100,28 +108,28 @@ const Profile = () => {
                     className="btn"
                   >
                     Edit Profile
-                    <i class="bi bi-pen fs-3 m-3 text-primary"></i>
+                    <i className="bi bi-pen fs-3 m-3 text-primary"></i>
                   </button>
                 </div>
                 <DataGraph
-                  income={incResult?.sumTotal}
-                  expenses={expResult?.sumTotal}
+                  income={incResult.sumTotal}
+                  expenses={expResult.sumTotal}
                 />
               </div>
-
-              <p className="mb-8"> </p>
-
+              <div style={{ textAlign: "center", margin: "20px" }}>
+          <h2 className="text-success">Net Profit : {formattedNetProfit}</h2>
+        </div>
               <UserProfileStats
-                numOfTransExp={profile?.expenses?.length}
-                avgExp={expResult?.avg}
-                totalExp={expResult?.sumTotal}
-                minExp={expResult?.min}
-                maxExp={expResult?.max}
-                numOfTransInc={profile?.income?.length}
-                avgInc={incResult?.avg}
-                totalInc={incResult?.sumTotal}
-                minInc={incResult?.min}
-                maxInc={incResult?.max}
+                numOfTransExp={expResult.numOfTransactions}
+                avgExp={expResult.avg}
+                totalExp={expResult.sumTotal}
+                minExp={expResult.min}
+                maxExp={expResult.max}
+                numOfTransInc={incResult.numOfTransactions}
+                avgInc={incResult.avg}
+                totalInc={incResult.sumTotal}
+                minInc={incResult.min}
+                maxInc={incResult.max}
               />
               <div className="d-flex align-items-center justify-content-center">
                 <button

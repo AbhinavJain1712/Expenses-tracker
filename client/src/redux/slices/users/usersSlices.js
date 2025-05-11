@@ -94,7 +94,7 @@ export const userProfileAction = createAsyncThunk(
     };
     //http call
     try {
-      const { data } = await axios.get(`${baseUrl}/api/users/profile/`, config);
+      const { data } = await axios.get(`${baseUrl}/api/users/profile`, config);
       return data;
     } catch (error) {
       if (!error?.response) {
@@ -120,10 +120,10 @@ export const updateUserAction = createAsyncThunk(
     //http call
     try {
       const { data } = await axios.put(
-        `${baseUrl}/api/users/${userData?.id}`,
+        `${baseUrl}/api/users/profile`,
         {
-          lastname: userData?.lastname,
           firstname: userData?.firstname,
+          lastname: userData?.lastname,          
           email: userData?.email,
         },
         config

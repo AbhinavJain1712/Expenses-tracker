@@ -5,6 +5,10 @@ import navigate from "../../utils/navigate";
 
 const UserProfileContentDetails = ({ item }) => {
   const history = useHistory();
+  const handleDelete = () => {
+    // Navigate to delete confirmation page or perform delete action directly
+    navigate(history, "delete", item);
+  };
   return (
     <tr className="align-middle text-dark">
       <td className="p-6">{item?.title}</td>
@@ -31,6 +35,21 @@ const UserProfileContentDetails = ({ item }) => {
             />
           </svg>
         </button>
+        <button
+            onClick={handleDelete}
+            className="badge bg-danger-light text-danger"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              className="bi bi-trash"
+              viewBox="0 0 16 16"
+            >
+              <path d="M5.5 0a.5.5 0 0 1 .5.5V1h5V.5a.5.5 0 0 1 1 0V1h1.5a.5.5 0 0 1 0 1H1a.5.5 0 0 1 0-1H5V.5a.5.5 0 0 1 .5-.5zM3 2h10v1H3V2zm1 1h8v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V3z" />
+            </svg>
+          </button>
       </td>
     </tr>
   );

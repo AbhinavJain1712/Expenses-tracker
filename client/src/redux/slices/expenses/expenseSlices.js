@@ -84,11 +84,11 @@ const expenseSlices = createSlice({
       state.expServerErr = undefined;
     });
     builder.addCase(resetExpDeleted, (state, action) => {
-      state.isDeleted = true;
+      state.isExpDeleted = true;
     });
     builder.addCase(deleteExpenseAction.fulfilled, (state, action) => {
       state.expLoading = false;
-      state.isDeleted = false;
+      state.isExpDeleted = false;
       state.expenseDeleted = action?.payload;
       state.expAppErr = undefined;
       state.expServerErr = undefined;

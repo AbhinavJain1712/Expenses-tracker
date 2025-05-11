@@ -1,11 +1,8 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import useCurrencyFormatter from "../../hooks/useCurrencyFormatter";
+import useCurrencyFormatter from "../../../hooks/useCurrencyFormatter";
 
-import { fetchAccountStatsAction } from "../../redux/slices/accountStats/accountStatsSlices";
-import DataGrap from "./DataGrap";
-
-const DashboardData = ({
+const UserProfileStats = ({
   avgExp,
   totalExp,
   minExp,
@@ -16,34 +13,16 @@ const DashboardData = ({
   minInc,
   maxInc,
   numOfTransInc,
-  netProfit,
 }) => {
-  const dispatch = useDispatch();
   //format curr
-  const formattedTotalExp = useCurrencyFormatter("USD", totalExp);
-  const formattedTotalInc = useCurrencyFormatter("USD", totalInc);
-  const formattedNetProfit = useCurrencyFormatter("USD", netProfit);
+  const formattedAmtExp = useCurrencyFormatter("INR", totalExp);
+  const formattedAmtInc = useCurrencyFormatter("INR", totalInc);
   //format date
+ 
+
   return (
     <section class="py-6">
       <div class="container">
-        {/* Grpah */}
-        
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            marginBottom: "20px",
-          }}
-        >
-          {/* Grpah */}
-          <DataGrap income={25000} expenses={20016}/>
-        </div>
-        {/* Net Profit */}
-        <div style={{ textAlign: "center", margin: "20px" }}>
-          <h2 className="text-success">Net Profit : 4984</h2>
-        </div>
         <div class="row">
           <div class="col-12 col-md-6 mb-6">
             <div class="p-8 border rounded-2">
@@ -53,36 +32,34 @@ const DashboardData = ({
                   style={{ width: "40px", height: "40px" }}
                 ></span>
                 {/* Expenses Start */}
-                <span class="badge fs-2 bg-light text-danger">
-                  Total Expenses
-                </span>
+                <span class="badge fs-2 bg-light text-danger">Total Expense</span>
               </div>
-              <h1 class="mb-4">20016</h1>
+              <h1 class="mb-4">{formattedAmtExp}</h1>
               <p class="mb-0">
-                <span>Number of Transactions</span>
+                <span>Number of Transactions:</span>
                 <span class="text-danger ms-1">
-                  <span>16</span>
+                  <span>{numOfTransExp}</span>
                 </span>
               </p>
 
               <p class="mb-0">
-                <span>Minimum Transactions</span>
+                <span>Minimum Transaction:</span>
                 <span class="text-danger ms-1">
-                  <span>50</span>
+                  <span>{`₹`+minExp}</span>
                 </span>
               </p>
 
               <p class="mb-0">
-                <span>Maximum Transactions</span>
+                <span>Maximum Transaction:</span>
                 <span class="text-danger ms-1">
-                  <span>5000</span>
+                  <span>{`₹`+maxExp}</span>
                 </span>
               </p>
 
               <p class="mb-0">
-                <span>Average Transactions</span>
+                <span>Average Transaction:</span>
                 <span class="text-danger ms-1">
-                  <span>1251</span>
+                  <span>{`₹`+avgExp}</span>
                 </span>
               </p>
             </div>
@@ -91,42 +68,38 @@ const DashboardData = ({
             <div class="p-8 border rounded-2">
               <div class="d-flex mb-6 align-items-start justify-content-between">
                 <span
-                  class="d-inline-flex align-items-center justify-content-center bg-danger-light rounded-2"
+                  class="d-inline-flex align-items-center justify-content-center bg-light-light rounded-2"
                   style={{ width: "40px", height: "40px" }}
                 ></span>
-
                 {/* Income Start */}
-                <span class="badge fs-2 bg-primary-light text-primary">
-                  Total Income
-                </span>
+                <span class="badge fs-2 bg-primary-light text-primary">Total Income</span>
               </div>
-              <h1 class="mb-4">25000</h1>
-
+              <h1 class="mb-4">{formattedAmtInc}</h1>
               <p class="mb-0">
-                <span>Number of Transactions</span>
+                <span>Number of Transactions:</span>
                 <span class="text-danger ms-1">
-                  <span>20</span>
+                  <span>{numOfTransInc}</span>
                 </span>
               </p>
 
               <p class="mb-0">
-                <span>Minimum Transactions</span>
+                <span>Minimum Transaction:</span>
                 <span class="text-danger ms-1">
-                  <span>100</span>
+                  <span>{`₹`+minInc}</span>
                 </span>
               </p>
 
               <p class="mb-0">
-                <span>Maximum Transactions</span>
+                <span>Maximum Transaction:</span>
                 <span class="text-danger ms-1">
-                  <span>10000</span>
+                  <span>{`₹`+maxInc}</span>
                 </span>
               </p>
 
               <p class="mb-0">
-                <span>Average Transactions</span>
+                <span>Average Transaction:</span>
                 <span class="text-danger ms-1">
-                  <span>1250</span>
+                  <span>{`₹`+avgInc}</span>
                 </span>
               </p>
             </div>
@@ -137,4 +110,4 @@ const DashboardData = ({
   );
 };
 
-export default DashboardData;
+export default UserProfileStats;

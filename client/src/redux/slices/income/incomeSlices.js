@@ -82,11 +82,11 @@ const incomeSlices = createSlice({
       state.incServerErr = undefined;
     });
     builder.addCase(resetIncomeDeleted, (state, action) => {
-      state.isDeleted = true;
+      state.isIncDeleted = true;
     });
     builder.addCase(deleteIncomeAction.fulfilled, (state, action) => {
       state.incLoading = false;
-      state.isDeleted = false;
+      state.isIncDeleted = false;
       state.incomeDeleted = action?.payload;
       state.incAppErr = undefined;
       state.incServerErr = undefined;

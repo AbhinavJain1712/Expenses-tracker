@@ -64,11 +64,11 @@ const AddExpense = () => {
                   <span className="text-muted">Expense</span>
                   <h2 className="mb-4 fw-light">Record New Expense</h2>
                   {/* Display income Err */}
-                  {expServerErr || expAppErr ? (
+                  {/* {expServerErr || expAppErr ? (
                     <div className="alert alert-danger" role="alert">
                       {expServerErr} {expAppErr}
                     </div>
-                  ) : null}
+                  ) : null} */}
                   <div className="mb-3 input-group">
                     <input
                       value={formik.values.title}

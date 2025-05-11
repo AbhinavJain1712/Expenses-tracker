@@ -4,91 +4,82 @@ import { Link } from "react-router-dom";
 import ContentDetails from "../../components/ContentDetails/ContentDetails";
 import ErrorDisplayMessage from "../../components/ErrorDisplayMessage";
 import LoadingComponent from "../../components/Loading/Loading";
-
 import AppPagination from "../../components/Pagination/AppPagination";
-import { fetchExpensesAction } from "../../redux/slices/expenses/expenseAction";
+import { fetchIncomesAction } from "../../redux/slices/income/incomeAction";
 import { userProfileAction } from "../../redux/slices/users/usersSlices";
 import calTransaction from "../../utils/accStatistics";
 
-const ExpensesList = () => {
+const IncomeList = () => {
   const [page, setPage] = useState(1);
   const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(fetchExpensesAction(page));
-  }, [page]);
-  //expenses
-  const expenses = useSelector(state => state.expenses);
-  const { expLoading, expenseList, expAppErr, expServerErr } = expenses;
-  console.log({ expLoading, expenseList, expAppErr, expServerErr });
-  const totalExp = calTransaction(expenseList?.docs ? expenseList?.docs : []);
 
-  //user Expenses
+  // Fetch incomes and user profile
   useEffect(() => {
+    dispatch(fetchIncomesAction(page));
     dispatch(userProfileAction());
-  }, []);
-  const user = useSelector(state => state.users);
+  }, [dispatch, page]);
+
+  // Select income and user state
+  const income = useSelector((state) => state.income);
+  const { incLoading, incomeList, incAppErr, incServerErr } = income;
+
+  const user = useSelector((state) => state.users);
   const { profile, userLoading, userAppErr, userServerErr } = user;
+
+  // Calculate total income
+  const totalInc = calTransaction(incomeList?.docs ? incomeList?.docs : []);
 
   return (
     <>
-      {expLoading ? (
+      {(incLoading || userLoading) ? (
         <LoadingComponent />
-      ) : expAppErr || expServerErr ? (
+      ) : (incAppErr || incServerErr || userAppErr || userServerErr) ? (
         <ErrorDisplayMessage>
-          {" "}
-          {expServerErr}
-          {expAppErr}
+          {incServerErr || userServerErr || incAppErr || userAppErr}
         </ErrorDisplayMessage>
       ) : (
         <section className="py-6">
           <div className="container-fluid">
             <div className="position-relative border rounded-2">
-              <a
-                className="position-absolute top-0 end-0 mt-4 me-4"
-                href="#"
-              ></a>
               <div className="pt-8 px-8 mb-8">
-                <h6 className="mb-0 fs-3">Recent Expense transactions</h6>
+                <h6 className="mb-0 fs-3">Recent Income transactions</h6>
                 <p className="mb-0">
-                  Below is the history of your expense transactions records
+                  Below is the history of your income transactions records
                 </p>
-                <Link
-                  to="/add-expense"
-                  className="btn  btn-outline-danger me-2 m-2"
-                >
-                  New Expense
+                <Link to="/add-income" className="btn btn-success me-2 m-2">
+                  New Income
                 </Link>
               </div>
               <table className="table">
                 <thead>
                   <tr className="table-active">
                     <th scope="col">
-                      <button className="btn d-flex align-items-centerr text-uppercase">
-                        <small>Withdrawed By</small>
+                      <button className="btn d-flex align-items-center text-uppercase">
+                        <small>Deposited By</small>
                       </button>
                     </th>
                     <th scope="col">
-                      <button className="btn d-flex align-items-centerr text-uppercase">
+                      <button className="btn d-flex align-items-center text-uppercase">
                         <small>Title</small>
                       </button>
                     </th>
                     <th scope="col">
-                      <button className="btn d-flex align-items-centerr text-uppercase">
+                      <button className="btn d-flex align-items-center text-uppercase">
                         <small>Description</small>
                       </button>
                     </th>
                     <th scope="col">
-                      <button className="btn d-flex align-items-centerr text-uppercase">
+                      <button className="btn d-flex align-items-center text-uppercase">
                         <small>Amount</small>
                       </button>
                     </th>
                     <th scope="col">
-                      <button className="btn d-flex align-items-centerr text-uppercase">
+                      <button className="btn d-flex align-items-center text-uppercase">
                         <small>Date</small>
                       </button>
                     </th>
                     <th scope="col">
-                      <button className="btn d-flex align-items-centerr text-uppercase">
+                      <button className="btn d-flex align-items-center text-uppercase">
                         <small>Action</small>
                       </button>
                     </th>
@@ -96,14 +87,16 @@ const ExpensesList = () => {
                 </thead>
                 <tbody>
                   <>
-                    {expenseList?.length <= 0 ? (
+                {incomeList?.docs?.length <= 0 ? (
                       <h2>No Expense Found</h2>
                     ) : (
-                      expenseList?.docs?.map(exp => (
-                        <ContentDetails item={exp} key={exp?._id} />
+                      incomeList?.docs?.map(inc => (
+                        profile?.isAdmin || inc.user === profile?._id ? (
+                          <ContentDetails item={inc} key={inc?._id} />
+                        ) : null
                       ))
                     )}
-                  </>
+                    </>
                 </tbody>
               </table>
             </div>
@@ -116,12 +109,13 @@ const ExpensesList = () => {
               marginTop: "20px",
             }}
           >
-            {expenseList?.docs?.length > 1 && (
+        {incomeList?.docs?.length > 1 && (
               <AppPagination
                 setPage={setPage}
-                items={expenseList?.totalPages}
+                items={incomeList?.totalPages}
               />
             )}
+            
           </div>
         </section>
       )}
@@ -129,4 +123,4 @@ const ExpensesList = () => {
   );
 };
 
-export default ExpensesList;
+export default IncomeList;

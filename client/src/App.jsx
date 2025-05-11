@@ -21,6 +21,7 @@ import AddExpense from "./Pages/Expenses/AddExpense";
 import PrivateProtectRoute from "./components/Navigation/PrivateProtectRoute";
 import AdminRoute from "./components/Navigation/AdminRoute";
 import NotAdmin from "./components/NotAdmin/NotAdmin";
+import DeleteContent from "./components/DeleteContent/DeleteContent";
 
 const options = {
   timeout: 50000,
@@ -34,7 +35,7 @@ const App = () => {
         <Navbar />
         <Switch>
           <Route exact path="/" component={Home} />
-          <AdminRoute exact path="/dashboard" component={DashboardData} />
+          <AdminRoute exact path="/dashboard" component={Dashboard} />
           <PrivateProtectRoute
             exact
             path="/user-profile-expenses"
@@ -59,6 +60,7 @@ const App = () => {
             path="/user-expenses"
             component={UserExpenses}
           /> */}
+           <PrivateProtectRoute exact path="/delete" component={DeleteContent} />
           <PrivateProtectRoute
             exact
             path="/add-expense"

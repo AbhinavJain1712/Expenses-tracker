@@ -63,11 +63,11 @@ const AddIncome = () => {
                   <span className="text-muted">Income</span>
                   <h2 className="mb-4 fw-light">Record New Income</h2>
                   {/* Display income Err */}
-                  {incServerErr || incAppErr ? (
+                  {/* {incServerErr || incAppErr ? (
                     <div className="alert alert-danger" role="alert">
                       {incServerErr} {incAppErr}
                     </div>
-                  ) : null}
+                  ) : null} */}
                   <div className="mb-3 input-group">
                     <input
                       value={formik.values.title}

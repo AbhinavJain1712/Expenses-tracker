@@ -1,8 +1,11 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import useCurrencyFormatter from "../../../hooks/useCurrencyFormatter";
+import useCurrencyFormatter from "../../hooks/useCurrencyFormatter";
 
-const UserProfileStats = ({
+import { fetchAccountStatsAction } from "../../redux/slices/accountStats/accountStatsSlices";
+import DataGrap from "./DataGrap";
+
+const DashboardData = ({
   avgExp,
   totalExp,
   minExp,
@@ -13,15 +16,34 @@ const UserProfileStats = ({
   minInc,
   maxInc,
   numOfTransInc,
+  netProfit,
 }) => {
+  const dispatch = useDispatch();
   //format curr
-  const formattedAmt = useCurrencyFormatter("USD", totalExp);
-  const formattedAmtInc = useCurrencyFormatter("USD", totalInc);
+  const formattedTotalExp = useCurrencyFormatter("INR", totalExp);
+  const formattedTotalInc = useCurrencyFormatter("INR", totalInc);
+  const formattedNetProfit = useCurrencyFormatter("INR", netProfit);
   //format date
-
   return (
     <section class="py-6">
       <div class="container">
+        {/* Grpah */}
+        
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            marginBottom: "20px",
+          }}
+        >
+          {/* Grpah */}
+          <DataGrap income={totalInc} expenses={totalExp}/>
+        </div>
+        {/* Net Profit */}
+        <div style={{ textAlign: "center", margin: "20px" }}>
+          <h2 className="text-success">Net Transactions : {formattedNetProfit}</h2>
+        </div>
         <div class="row">
           <div class="col-12 col-md-6 mb-6">
             <div class="p-8 border rounded-2">
@@ -31,34 +53,36 @@ const UserProfileStats = ({
                   style={{ width: "40px", height: "40px" }}
                 ></span>
                 {/* Expenses Start */}
-                <span class="badge bg-light fs-2 text-primary">Expenses</span>
+                <span class="badge fs-2 bg-light text-danger">
+                  Total Expenses
+                </span>
               </div>
-              <h1 class="mb-4">{formattedAmt}</h1>
+              <h1 class="mb-4">{formattedTotalExp}</h1>
               <p class="mb-0">
-                <span>Number of Transactions</span>
+                <span>Number of Transactions:</span>
                 <span class="text-danger ms-1">
                   <span>{numOfTransExp}</span>
                 </span>
               </p>
 
               <p class="mb-0">
-                <span>Minimum Transactions</span>
+                <span>Minimum Transaction:</span>
                 <span class="text-danger ms-1">
-                  <span>{minExp}</span>
+                  <span>{`₹`+minExp}</span>
                 </span>
               </p>
 
               <p class="mb-0">
-                <span>Maximum Transactions</span>
+                <span>Maximum Transaction:</span>
                 <span class="text-danger ms-1">
-                  <span>{maxExp}</span>
+                  <span>{`₹`+maxExp}</span>
                 </span>
               </p>
 
               <p class="mb-0">
-                <span>Average Transactions</span>
+                <span>Average Transaction:</span>
                 <span class="text-danger ms-1">
-                  <span>{avgExp}</span>
+                  <span>{`₹`+avgExp}</span>
                 </span>
               </p>
             </div>
@@ -73,36 +97,36 @@ const UserProfileStats = ({
 
                 {/* Income Start */}
                 <span class="badge fs-2 bg-primary-light text-primary">
-                  Income Transactions
+                  Total Income
                 </span>
               </div>
-              <h1 class="mb-4 p-2">{formattedAmtInc}</h1>
+              <h1 class="mb-4">{formattedTotalInc}</h1>
 
               <p class="mb-0">
-                <span>Number of Transactions</span>
+                <span>Number of Transactions:</span>
                 <span class="text-danger ms-1">
                   <span>{numOfTransInc}</span>
                 </span>
               </p>
 
               <p class="mb-0">
-                <span>Minimum Transactions</span>
+                <span>Minimum Transaction:</span>
                 <span class="text-danger ms-1">
-                  <span>{minInc}</span>
+                  <span>{`₹`+minInc}</span>
                 </span>
               </p>
 
               <p class="mb-0">
-                <span>Maximum Transactions</span>
+                <span>Maximum Transaction:</span>
                 <span class="text-danger ms-1">
-                  <span>{maxInc}</span>
+                  <span>{`₹`+maxInc}</span>
                 </span>
               </p>
 
               <p class="mb-0">
-                <span>Average Transactions</span>
+                <span>Average Transaction:</span>
                 <span class="text-danger ms-1">
-                  <span>{avgInc}</span>
+                  <span>{`₹`+avgInc}</span>
                 </span>
               </p>
             </div>
@@ -113,4 +137,4 @@ const UserProfileStats = ({
   );
 };
 
-export default UserProfileStats;
+export default DashboardData;
